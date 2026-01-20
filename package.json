@@ -1,0 +1,209 @@
+{
+    "name": "rust-quick-run",
+    "displayName": "Rust Quick Run",
+    "description": "Quickly compile, run and debug individual Rust files without Cargo",
+    "version": "1.0.0",
+    "publisher": "joshivilas",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/joshivilas/rust-quick-run"
+    },
+    "icon": "images/icon.png",
+    "engines": {
+        "vscode": "^1.85.0"
+    },
+    "categories": [
+        "Programming Languages",
+        "Debuggers"
+    ],
+    "keywords": [
+        "rust",
+        "rustc",
+        "debug",
+        "run",
+        "compile",
+        "quick run"
+    ],
+    "activationEvents": [
+        "onLanguage:rust"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "rustQuickRun.run",
+                "title": "Rust Quick Run: Run File",
+                "icon": "$(play)"
+            },
+            {
+                "command": "rustQuickRun.debug",
+                "title": "Rust Quick Run: Debug File",
+                "icon": "$(debug-alt)"
+            },
+            {
+                "command": "rustQuickRun.build",
+                "title": "Rust Quick Run: Build File",
+                "icon": "$(tools)"
+            },
+            {
+                "command": "rustQuickRun.checkSyntax",
+                "title": "Rust Quick Run: Check Syntax",
+                "icon": "$(check)"
+            },
+            {
+                "command": "rustQuickRun.clean",
+                "title": "Rust Quick Run: Clean",
+                "icon": "$(trash)"
+            },
+            {
+                "command": "rustQuickRun.setArguments",
+                "title": "Rust Quick Run: Set Command Line Arguments",
+                "icon": "$(terminal)"
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "rustQuickRun.run",
+                "key": "ctrl+shift+r",
+                "when": "editorLangId == rust"
+            },
+            {
+                "command": "rustQuickRun.debug",
+                "key": "f5",
+                "when": "editorLangId == rust && !inDebugMode"
+            },
+            {
+                "command": "rustQuickRun.build",
+                "key": "ctrl+shift+b",
+                "when": "editorLangId == rust"
+            }
+        ],
+        "menus": {
+            "editor/context": [
+                {
+                    "command": "rustQuickRun.run",
+                    "when": "editorLangId == rust",
+                    "group": "rustQuickRun@1"
+                },
+                {
+                    "command": "rustQuickRun.debug",
+                    "when": "editorLangId == rust",
+                    "group": "rustQuickRun@2"
+                },
+                {
+                    "command": "rustQuickRun.build",
+                    "when": "editorLangId == rust",
+                    "group": "rustQuickRun@3"
+                }
+            ],
+            "editor/title": [
+                {
+                    "command": "rustQuickRun.run",
+                    "when": "editorLangId == rust",
+                    "group": "navigation@1"
+                },
+                {
+                    "command": "rustQuickRun.debug",
+                    "when": "editorLangId == rust",
+                    "group": "navigation@2"
+                }
+            ],
+            "explorer/context": [
+                {
+                    "command": "rustQuickRun.run",
+                    "when": "resourceExtname == .rs",
+                    "group": "rustQuickRun@1"
+                },
+                {
+                    "command": "rustQuickRun.debug",
+                    "when": "resourceExtname == .rs",
+                    "group": "rustQuickRun@2"
+                },
+                {
+                    "command": "rustQuickRun.build",
+                    "when": "resourceExtname == .rs",
+                    "group": "rustQuickRun@3"
+                }
+            ]
+        },
+        "configuration": {
+            "title": "Rust Quick Run",
+            "properties": {
+                "rustQuickRun.outputDirectory": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Directory for compiled output. Leave empty to use system temp directory."
+                },
+                "rustQuickRun.optimizationLevel": {
+                    "type": "string",
+                    "default": "0",
+                    "enum": [
+                        "0",
+                        "1",
+                        "2",
+                        "3",
+                        "s",
+                        "z"
+                    ],
+                    "enumDescriptions": [
+                        "No optimizations (fastest compile)",
+                        "Basic optimizations",
+                        "Standard optimizations",
+                        "Maximum optimizations",
+                        "Optimize for size",
+                        "Optimize for minimum size"
+                    ],
+                    "description": "Optimization level for compilation"
+                },
+                "rustQuickRun.showWarnings": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show compiler warnings in Problems panel"
+                },
+                "rustQuickRun.clearTerminalBeforeRun": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Clear terminal before running"
+                },
+                "rustQuickRun.saveBeforeRun": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Automatically save file before running"
+                },
+                "rustQuickRun.showCodeLens": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show Run/Debug CodeLens above main function"
+                },
+                "rustQuickRun.commandLineArguments": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Command line arguments to pass to the program"
+                }
+            }
+        }
+    },
+    "extensionDependencies": [],
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile && npm run lint",
+        "lint": "eslint src --ext ts",
+        "test": "node ./out/test/runTest.js",
+        "package": "vsce package"
+    },
+    "devDependencies": {
+        "@types/glob": "^8.1.0",
+        "@types/mocha": "^10.0.10",
+        "@types/node": "^20.x",
+        "@types/vscode": "^1.85.0",
+        "@typescript-eslint/eslint-plugin": "^6.15.0",
+        "@typescript-eslint/parser": "^6.15.0",
+        "@vscode/test-electron": "^2.3.8",
+        "@vscode/vsce": "^2.22.0",
+        "eslint": "^8.56.0",
+        "mocha": "^11.7.5",
+        "typescript": "^5.3.3"
+    }
+}
